@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    // 目标语言的版本
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    // 模块解析策略，ts默认用node的解析策略，即相对的方式导入
+    "moduleResolution": "Node",
+    // 严格模式
+    "strict": true,
+    //允许编译器编译 JS、JSX 文件
+    "allowJs": true,
+    // ts对jsx支持
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    // 允许 export = 导出，由 import from 导入
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    // TS需要引用的库
+    "lib": ["DOM", "ESNext", "WebWorker"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    // 配置路径 与别名搭配
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    // "resolve": {
+    //   "extensions": [".ts", ".tsx", ".js", ".vue"]
+    // },
+    "noImplicitAny": false,
+    // 不允许隐式 Any 类型
+    "noUncheckedIndexedAccess": true
+  },
+  // 那些文件需要ts
+  "include": ["src/*", "**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  // 排除node_modules
+  "exclude": ["node_modules"],
+  "references": [{"path": "./tsconfig.node.json"}]
+}
