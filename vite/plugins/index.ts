@@ -1,8 +1,8 @@
-import type { PluginOption } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import { createHtmlPlugin } from "vite-plugin-html";
 import { visualizer } from "rollup-plugin-visualizer";
+import type { PluginOption } from "vite";
 
 import Legacy from "./Legacy";
 import Icons from "./Icons";

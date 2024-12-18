@@ -1,0 +1,14 @@
+# Ignore artifacts:
+
+/build/*
+/dist/*
+.local
+.output.js
+/node_modules/**
+pnpm-lock.yaml
+README.md
+
+**/*.svg
+**/*.sh
+
+/public/*
