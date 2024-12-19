@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Component } from "vue"
+import { computed, type Component } from "vue";
 import { useGlobalStore } from "@/store";
 import { useScreenStore } from "@/hooks";
 import ThemeConfig from "@/layout/components/ThemeConfig/index.vue";
@@ -20,7 +20,7 @@ import LayoutHorizontal from "@/layout/LayoutHorizontal/index.vue";
 import LayoutOptimum from "@/layout/LayoutOptimum/index.vue";
 import type { LayoutType } from "@/layout/types";
 
-const globalStore = useGlobalStore()
+const globalStore = useGlobalStore();
 const LayoutComponent: Record<LayoutType, Component> = {
   vertical: LayoutVertical,
   columns: LayoutColumns,
@@ -33,7 +33,3 @@ const layout = computed(() => globalStore.layout);
 // 获取当前为[移动端、IPad、PC端]仓库，阔以使用 watchEffect(() => {}) 进行监听。
 const { isMobile } = useScreenStore();
 </script>
-
-<style scoped lang="scss">
-
-</style>

@@ -37,8 +37,7 @@ jobs:
           host: ${{ secrets.HOST }}
           user: ${{ secrets.SSH_USER }}
           pass: ${{ secrets.SSH_PASSWORD }}
-          SERVER_PATH: '/home/web'             # 服务器上的目标路径
+          SERVER_PATH: "/home/web" # 服务器上的目标路径
           port: 22
         run: |
           rsync -avz --delete dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
-

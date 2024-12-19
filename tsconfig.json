@@ -28,9 +28,9 @@
     "paths": {
       "@/*": ["src/*"]
     },
-//     "resolve": {
-//       "extensions": [".ts", ".tsx", ".js", ".vue"]
-//     },
+    //     "resolve": {
+    //       "extensions": [".ts", ".tsx", ".js", ".vue"]
+    //     },
     "noImplicitAny": false,
     // 不允许隐式 Any 类型
     "noUncheckedIndexedAccess": true

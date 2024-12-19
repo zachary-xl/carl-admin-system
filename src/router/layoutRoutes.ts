@@ -13,7 +13,7 @@ export const layoutRoutes: RouteRecordRaw[] = [
     component: Layout,
     redirect: HOME_URL,
     children: [
-       {
+      {
         path: HOME_URL, // [唯一]
         component: () => import("@/views/home/index.vue"),
         meta: {
@@ -28,5 +28,5 @@ export const layoutRoutes: RouteRecordRaw[] = [
         }
       }
     ]
-  },
+  }
 ];

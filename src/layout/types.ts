@@ -1,1 +1,1 @@
-export type LayoutType = "vertical" | "columns" | "classic" | "horizontal" | 'optimum' | string;
+export type LayoutType = "vertical" | "columns" | "classic" | "horizontal" | "optimum" | string;

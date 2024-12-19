@@ -2,8 +2,9 @@ import { createRouter, createWebHashHistory, createWebHistory, RouterHistory } f
 import { configSource } from "@/config";
 import { nprogress } from "@/utils";
 import { errorRoutes } from "./errorRoutes";
+import { layoutRoutes } from "./layoutRoutes";
+import { staticRouter } from "./staticRoutes";
 import type { RouteLocationNormalized } from "vue-router";
-import { layoutRoutes } from "@/router/layoutRoutes";
 
 // 路由访问两种模式：带#号的哈希模式，正常路径的web模式。
 const routerMode = {
@@ -15,7 +16,7 @@ const routerMode = {
 const router = createRouter({
   // 路由模式hash或者默认不带#
   history: routerMode[configSource.routerMode](),
-  routes: [...layoutRoutes, ...errorRoutes],
+  routes: [...layoutRoutes, ...staticRouter, ...errorRoutes],
   strict: false,
   // 滚动行为
   scrollBehavior(_to, _from, savedPosition) {
