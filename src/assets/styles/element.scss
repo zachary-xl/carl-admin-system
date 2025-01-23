@@ -1,18 +1,74 @@
+/* 主要调整 element 中的重复或覆盖样式 */
+// label {
+//   font-weight: 700;
+// }
+
+// .el-input {
+//   min-width: 220px;
+// }
+
+// .el-input-number,
+// .el-select {
+//   width: 100% !important;
+// }
+
+// .el-table {
+//   .el-table__header-wrapper,
+//   .el-table__header {
+//     background-color: #00a8ff !important;
+
+//     & th {
+//       word-break: break-word;
+//       background-color: #f8f8f9 !important;
+//       color: #515a6e;
+//       height: 40px !important;
+//       font-size: 13px;
+//     }
+//   }
+
+//   .el-table__body-wrapper {
+//     .el-button.is-text {
+//       padding-left: 0;
+//       padding-right: 0;
+//     }
+
+//     .el-button [class*="el-icon-"] + span {
+//       margin-left: 1px;
+//     }
+//   }
+// }
+// .el-pagination {
+//   position: absolute;
+//   top: 10px;
+//   right: 0;
+//   .el-input {
+//     min-width: 37px;
+//   }
+// }
+
 /* 图标颜色 */
-.icon-color {
+.icon {
   // 翻转色字体颜色
   color: var(--el-header-text-color);
   outline: none; // 去除伪元素
+
   &:hover {
     color: var(--el-color-primary);
     cursor: pointer;
   }
 }
+:root {
+  --el-menu-sub-item-height: $aside-menu-height !important;
+  // --el-menu-horizontal-sub-item-height: 40px !important; // 横向菜单高度覆盖
+}
 
-.svg-icon {
-  width: 1em;
-  height: 1em;
-  position: relative;
-  fill: currentColor;
-  vertical-align: -2px;
+/* 当前页面最大化CSS，选项卡也行要去掉可以加上.el-tabs */
+.main-maximize {
+  .aside-split,
+  .el-aside,
+  .el-header,
+  .el-footer,
+  .tabs-box {
+    display: none !important;
+  }
 }

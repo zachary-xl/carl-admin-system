@@ -1,23 +1,31 @@
 import { createApp } from "vue";
-import ElementPlus from "element-plus";
-import zhCn from "element-plus/dist/locale/zh-cn";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 
 import App from "./App.vue";
-import router from "@/router";
-import pinia from "@/store";
-import i18n from "@/languages";
-import globalComponents from "@/components";
-import { registerIconComponent } from "@/utils";
+import store from "./store";
+import router from "./router";
+import "./permission";
+// 引入animate
 import "animate.css";
-import "@/assets/styles/index.scss";
+import "element-plus/dist/index.css";
+import "./assets/styles/index.scss";
+// SVG插件配置
+import "virtual:svg-icons-register";
+import { registerIconComponent } from "@/utils";
+import directives from "@/directives";
+import components from "@/components";
 
+// 插件扩展
+dayjs.extend(duration);
+// app实例
 const app = createApp(App);
 registerIconComponent(app);
-app.use(ElementPlus, {
-  locale: zhCn
-});
-app.use(globalComponents);
-app.use(pinia);
-app.use(i18n);
+
+app.use(directives);
+app.use(components);
+app.use(store);
 app.use(router);
+console.log(app._context.components);
+
 app.mount("#app");

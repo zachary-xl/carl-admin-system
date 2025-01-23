@@ -1,4 +1,6 @@
-export { default as nprogress } from "./nprogress";
-export * from "./utils";
-export * from "./theme";
-export * from "./registerIcon";
+export { default as registerIconComponent } from "./registerIcon";
+export * from "./storage";
+export * from "./format";
+export * from "./methods";
+export * from "./mapToMenus";
+export * from "./verify";

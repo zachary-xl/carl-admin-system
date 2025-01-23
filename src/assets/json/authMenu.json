@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "msg": "SUCCESS",
+  "data": [
+    {
+      "menuId": 1,
+      "menuName": "活动管理",
+      "enName": "Activity Manage",
+      "parentId": 0,
+      "path": "/activity",
+      "name": "activityPage",
+      "component": "activity/index",
+      "icon": "Tools",
+      "isHide": "1"
+    }
+  ]
+}

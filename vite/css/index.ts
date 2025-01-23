@@ -5,7 +5,9 @@ export default function createViteCss(): CSSOptions {
     devSourcemap: true, // css sourcemap
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@/assets/styles/variables.scss" as *;`
+        additionalData: `@use "@/assets/styles/variables.scss" as *;`,
+        javascriptEnabled: true,
+        api: "modern-compiler"
       }
     }
   };

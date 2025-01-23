@@ -1,4 +1,4 @@
-export const optimumHeaderTheme = {
+export const optimumHeaderTheme: any = {
   light: {
     "--el-header-optimum-color": "#000000",
     "--el-header-optimum-hover-color": "var(--el-color-primary)",
@@ -25,7 +25,7 @@ export const optimumHeaderTheme = {
   }
 };
 
-export const headerTheme = {
+export const headerTheme: any = {
   light: {
     "--el-header-bg-color": "#ffffff",
     "--el-header-text-color": "#303133",
@@ -43,7 +43,7 @@ export const headerTheme = {
   }
 };
 
-export const asideTheme = {
+export const asideTheme: any = {
   light: {
     "--el-aside-logo-text-color": "#303133"
   },
@@ -55,7 +55,7 @@ export const asideTheme = {
   }
 };
 
-export const menuTheme = {
+export const menuTheme: any = {
   light: {
     "--el-menu-bg-color": "#ffffff",
     "--el-menu-hover-bg-color": "#f4f4f5",

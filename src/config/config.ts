@@ -1,12 +1,5 @@
 import type { TConfig } from "./types";
 
-// 全局默认配置项
-// 首页地址[默认]
-export const HOME_URL: string = "/home/index";
-
-// 默认主题颜色
-export const DEFAULT_THEME = "#2992FF";
-
 // 获取环境变量
 const ENV = import.meta.env;
 // 默认配置文件

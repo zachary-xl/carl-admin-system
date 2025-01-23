@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4073068 */
+  src: url("iconfont.woff2?t=1684373896037") format("woff2"), url("iconfont.woff?t=1684373896037") format("woff"),
+    url("iconfont.ttf?t=1684373896037") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+}
+
+.iconfont {
+  font-family: "iconfont", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-fullscreen-exit:before {
+  content: "\e7ed";
+}
+
+.icon-fullscreen-open:before {
+  content: "\e7ec";
+}

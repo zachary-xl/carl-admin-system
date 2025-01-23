@@ -4,7 +4,8 @@ import piniaPluginPersist from "pinia-plugin-persist";
 const pinia = createPinia();
 pinia.use(piniaPluginPersist);
 
-export * from "./modules/global";
-// export { default as useSettingStore } from "./modules/settings";
-// export { default as useTagsViewStore } from "./modules/tagsView";
+export { default as useAuthStore } from "./modules/auth";
+export { default as useTabsStore } from "./modules/tabs";
+export { default as useGlobalStore } from "./modules/global";
+export { default as useKeepAliveStore } from "./modules/keepAlive";
 export default pinia;
