@@ -10,8 +10,12 @@
       "path": "/activity",
       "name": "activityPage",
       "component": "activity/index",
-      "icon": "Tools",
-      "isHide": "1"
+      "icon": "",
+      "isHide": "1",
+      "redirect": "",
+      "isAffix": "1",
+      "isFull": "1",
+      "isLink": ""
     }
   ]
 }
