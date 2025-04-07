@@ -13,6 +13,7 @@
     "@vueuse/core": "^10.11.1",
     "animate.css": "^4.1.1",
     "axios": "^1.7.4",
+    "carl-system": "file:",
     "consola": "^3.2.3",
     "dayjs": "^1.11.13",
     "element-plus": "^2.8.0",
