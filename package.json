@@ -1,5 +1,5 @@
 {
-  "name": "full-house-system",
+  "name": "carl-system",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,7 +16,7 @@
     "consola": "^3.2.3",
     "dayjs": "^1.11.13",
     "element-plus": "^2.8.0",
-    "full-house-system": "file:",
+    "fabric": "^6.6.2",
     "loadsh": "^0.0.4",
     "localforage": "^1.10.0",
     "normalize.css": "^8.0.1",
