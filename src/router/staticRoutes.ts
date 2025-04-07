@@ -30,7 +30,6 @@ export default [
     meta: {
       title: "主控台", // 标题
       enName: "Master Station", // 英文名称
-      icon: "HomeFilled", // 图标 HomeFilled
       isHide: "1", // 代表路由在菜单中是否隐藏，是否隐藏[0隐藏，1显示]
       isLink: "", // 是否外链[有值则是外链]
       isKeepAlive: "0", // 是否缓存路由数据[0是，1否]
@@ -45,5 +44,20 @@ export default [
     meta: {
       title: "登录"
     }
+  },
+  {
+    name: "FarmersForm",
+    path: "/farmers-form",
+    component: () => import("@/views/farmersForm/index.vue"),
+  },
+  {
+    name: "SalesmanLogin",
+    path: "/salesman-login",
+    component: () => import("@/views/salesmanLogin/index.vue"),
+  },
+  {
+    name: "SalesmanMain",
+    path: "/salesman-main",
+    component: () => import("@/views/salesmanMain/index.vue"),
   }
 ] as unknown as RouteRecordRaw[];
