@@ -4,48 +4,48 @@
       <div class="login-left">
         <img class="login-left-img" src="@/assets/images/login_left.png" alt="login" />
       </div>
-      <!-- <el-form ref="formInstance" :model="loginForm" :rules="loginRules" class="login-form">
+      <el-form ref="formInstance" :model="loginForm" :rules="loginRules" class="login-form">
         <div class="mb-4 flex items-center justify-center">
-          <h3 class="text-xl font-bold">{{ configSource.projectName }}</h3>
+          <h3 class="text-xl font-bold">{{ configSource.systemTitle }}</h3>
         </div>
         <el-form-item prop="username">
           <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
             <template #prefix>
-              <svg-icon icon-class="user" class="el-input__icon input-icon" />
+              <el-icon>
+                <UserFilled />
+              </el-icon>
             </template>
-</el-input>
-</el-form-item>
-<el-form-item prop="password">
-  <el-input v-model="loginForm.password" type="password" size="large" auto-complete="off" placeholder="密码"
-    @keyup.enter="handleLogin">
-    <template #prefix>
-              <svg-icon icon-class="password" class="el-input__icon input-icon" />
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.password" type="password" size="large" auto-complete="off" placeholder="密码"
+            @keyup.enter="handleLogin">
+            <template #prefix>
+              <el-icon>
+                <Lock />
+              </el-icon>
             </template>
-  </el-input>
-</el-form-item>
-<el-form-item prop="captchaCode" class="flex-nowrap justify-between">
-  <el-input v-model="loginForm.captchaCode" size="large" auto-complete="off" placeholder="验证码" class="flex-1 pr-4"
-    @keyup.enter="handleLogin">
-    <template #prefix>
+          </el-input>
+        </el-form-item>
+        <!-- <el-form-item prop="captchaCode" class="flex-nowrap justify-between">
+          <el-input v-model="loginForm.captchaCode" size="large" auto-complete="off" placeholder="验证码"
+            class="flex-1 pr-4" @keyup.enter="handleLogin">
+            <template #prefix>
               <svg-icon icon-class="validCode" class="el-input__icon input-icon" />
             </template>
-  </el-input>
-  <div class="login-code">
-    <img :src="captchaUrl" @click="getCaptchaCode" class="login-code-img" alt="验证码" />
-  </div>
-</el-form-item>
-<el-form-item class="w-full">
-  <el-button :loading="loading" size="large" type="primary" v-throttle:3000="handleLogin" class="w-full">
-    <span v-if="!loading">登 录</span>
-    <span v-else>登 录 中...</span>
-  </el-button>
-</el-form-item>
-</el-form> -->
+          </el-input>
+          <div class="login-code">
+            <img :src="captchaUrl" @click="getCaptchaCode" class="login-code-img" alt="验证码" />
+          </div>
+        </el-form-item> -->
+        <el-form-item class="w-full">
+          <el-button :loading="loading" size="large" type="primary" v-throttle:3000="handleLogin" class="w-full">
+            <span v-if="!loading">登 录</span>
+            <span v-else>登 录 中...</span>
+          </el-button>
+        </el-form-item>
+      </el-form>
       <!--        <el-checkbox v-model="loginForm.rememberMe" class="mb-4">记住密码</el-checkbox>-->
-      <el-button :loading="loading" size="large" type="primary" @click="handleLogin" class="w-full">
-        <span v-if="!loading">登 录</span>
-        <span v-else>登 录 中...</span>
-      </el-button>
     </div>
   </div>
 </template>
@@ -56,6 +56,7 @@ import { useAuthStore, useKeepAliveStore } from "@/store";
 import authLogin from "@/assets/json/authLogin.json";
 import { initDynamicRoutes } from "@/router/dynamicRoutes";
 import { MsgError, MsgWarning } from "@/utils/notification";
+import { postAuthLoginAPI } from "@/api";
 import type { FormInstance } from "element-plus";
 import type { TLoginForm } from "./types";
 
@@ -76,41 +77,41 @@ watch(
   { immediate: true }
 );
 
-const loginForm = reactive<TLoginForm>({
-  username: "",
-  password: "",
-  captchaCode: "",
-  captchaId: ""
+const loginForm = reactive<any>({
+  username: "admin",
+  password: "123456",
 });
 const loginRules = {
   username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
   password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
-  captchaCode: [{ required: true, trigger: "change", message: "请输入验证码" }]
+  // captchaCode: [{ required: true, trigger: "change", message: "请输入验证码" }]
 };
 
 const handleLogin = async () => {
-  // formInstance.value?.validate(async (isValid, fields) => {
-    // if (isValid) {
+  formInstance.value?.validate(async (isValid, fields) => {
+    if (isValid) {
       loading.value = true;
       try {
         // 1、执行登录接口
-        // const res = await loginAPI(loginForm)
-        console.log(authLogin);
+        const { data } = await postAuthLoginAPI(loginForm)
 
-        authStore.setTokenAction(authLogin.data.token);
+        // authStore.setUserInfoAction(data.user);
+        // authStore.setTokenTypeAction(data.tokenType);
+        authStore.setTokenAction(data.accessToken);
+
         // 2、添加动态路由 AND 用户按钮 AND 角色信息 AND 用户个人信息
         if (authStore?.token) {
           await initDynamicRoutes();
         } else {
           MsgWarning("请重新登录🌻");
-          router.replace(LOGIN_URL);
+          await router.replace(LOGIN_URL);
           return;
         }
         // 3、清空 tabs数据、keepAlive缓存数据
         // tabsStore.setTab([]);
-        keepAliveStore.setKeepAliveName([]);
+        await keepAliveStore.setKeepAliveName([]);
         // 4、跳转到首页
-        router.replace(HOME_URL);
+        await router.replace(HOME_URL);
       } catch (fields) {
         // 等待1秒关闭loading
         let loadingTime = 1;
@@ -119,11 +120,11 @@ const handleLogin = async () => {
           if (loadingTime === 0) loading.value = false;
         }, 1000);
       }
-    // } else {
-      // console.log("登录校验失败", fields);
-      // MsgError("校验失败，信息填写有误🌻");
-    // }
-  // });
+    } else {
+      console.log("登录校验失败", fields);
+      MsgError("校验失败，信息填写有误🌻");
+    }
+  });
 };
 const getCaptchaCode = () => {
   // postCaptchaAPI().then(({ data }) => {
@@ -132,7 +133,7 @@ const getCaptchaCode = () => {
   // });
 };
 onMounted(() => {
-  getCaptchaCode();
+  // getCaptchaCode();
 });
 </script>
 

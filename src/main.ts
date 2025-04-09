@@ -26,6 +26,5 @@ app.use(directives);
 app.use(components);
 app.use(store);
 app.use(router);
-console.log(app._context.components);
 
 app.mount("#app");

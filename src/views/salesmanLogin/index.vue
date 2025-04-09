@@ -9,7 +9,7 @@
             </div>
             <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" @submit.prevent="handleLogin"
                 class="login-form">
-                <h2 class="title text-center mb-4">业务员登录</h2>
+                <h2 class="title text-center mb-8">业务员登录</h2>
 
                 <!-- 手机号输入框 -->
                 <el-form-item prop="phone">
