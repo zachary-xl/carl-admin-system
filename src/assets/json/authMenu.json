@@ -18,6 +18,21 @@
       "isLink": ""
     },
     {
+      "menuId": 3,
+      "menuName": "养殖户详情",
+      "enName": "Farmers Detail",
+      "parentId": 1,
+      "path": "/farmers/detail",
+      "name": "farmersDetailPage",
+      "component": "farmers/components/Detail",
+      "icon": "",
+      "isHide": "0",
+      "redirect": "",
+      "isAffix": "1",
+      "isFull": "0",
+      "isLink": ""
+    },
+    {
       "menuId": 2,
       "menuName": "业务员管理",
       "enName": "Business Manage",

@@ -12,6 +12,7 @@ import {
 import { refreshTokenFn } from "@/utils/refreshTokenFn";
 import { getStorage, hasStorage, isType, removeStorage, setStorage } from "@/utils";
 import type { AxiosInstance, IAxiosConfig, IAxiosInterceptors, ILoadingInstance, TStatusMap, IRequest } from "./types";
+import { useAuthStore } from "@/store";
 
 const statusMap: TStatusMap = new Map();
 const LoadingInstance: ILoadingInstance = {
@@ -50,6 +51,8 @@ export default class MyRequest implements IRequest {
         if (config!.url && config.url.indexOf("/refresh") >= 0) {
           // token 过期
           config.headers![DEFAULT_HEADER_AUTHORIZATION] = getStorage("refreshToken");
+        } else if (router.currentRoute.value.path.indexOf("salesman") >= 0 && hasStorage("salesmanToken")) {
+          config.headers![DEFAULT_HEADER_AUTHORIZATION] = getStorage("salesmanToken");
         } else if (hasStorage("accessToken") && typeof window !== "undefined") {
           // 自动携带token
           config.headers![DEFAULT_HEADER_AUTHORIZATION] = getStorage("accessToken");
@@ -65,9 +68,8 @@ export default class MyRequest implements IRequest {
       (response) => {
         delStatus(response.config);
         this.showLoading && closeLoading(this.showLoading);
-        console.log(isType(response.data));
         if (isType(response.data) === "[object Blob]" || isType(response.data) === "[object ArrayBuffer]") {
-          return response;
+          return response.data;
         }
         if (this.showCodeMessage && response.data && response.data.code !== 0) {
           ElMessage({ type: "error", message: response.data.msg });
@@ -77,23 +79,17 @@ export default class MyRequest implements IRequest {
       },
       async (error) => {
         this.showLoading && closeLoading(this.showLoading); // 关闭loading
-        if (error.response?.status === 401) {
-          try {
-            const result = await refreshTokenFn();
-            if (result?.data?.data?.accessToken) {
-              const accessToken = result.data.data.accessToken;
-              setStorage("accessToken", accessToken);
-              error.config.headers![DEFAULT_HEADER_AUTHORIZATION] = accessToken;
-              return await this.instance.request(error.config);
-            } else {
-              removeStorage("accessToken");
-              removeStorage("refreshToken");
-              return await router.push("/login?redirect=" + encodeURIComponent(router.currentRoute.value.fullPath));
-            }
-          } catch (e) {
-            removeStorage("accessToken");
-            removeStorage("refreshToken");
-            return await router.push("/login?redirect=" + encodeURIComponent(router.currentRoute.value.fullPath));
+        if (error.response?.status === 401 || error.response?.status === 401) {
+          const authStore = useAuthStore();
+          removeStorage("accessToken");
+          removeStorage("salesmanToken");
+          removeStorage("refreshToken");
+          console.log("error", error);
+          authStore.setTokenAction("");
+          if (router.currentRoute.value.path.indexOf("salesman") >= 0) {
+            return await router.push("/salesman-login");
+          } else {
+            return await router.push("/login");
           }
         }
         error.config && delStatus(error.config);

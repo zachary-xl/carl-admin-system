@@ -12,11 +12,11 @@ export default function createViteServer(baseUrl, serverUrl): ServerOptions {
       //   changeOrigin: true,
       //   rewrite: path => path.replace(baseUrl, "")
       // }
-      // "/v1": {
-      //   target: serverUrl,
-      //   changeOrigin: true,
-      //   rewrite: path => path.replace("/v1", "")
-      // }
+      "/dev-api": {
+        target: "http://farm_animal_insurance.chooseme.top",
+        changeOrigin: true,
+        rewrite: (path) => path.replace("/dev-api", "")
+      }
     }
   };
 }

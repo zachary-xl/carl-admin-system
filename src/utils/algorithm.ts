@@ -14,7 +14,6 @@ function measureSort(sortAlgorithm, n = 100000) {
   sortAlgorithm(arr);
   const endTime = performance.now();
   const timeElapsed = (endTime - startTime).toFixed(3);
-  console.log(`使用 ${sortAlgorithm.name} 算法排序 ${n} 个元素 消耗时间为 ${timeElapsed} 毫秒.`);
 }
 
 function testSort(sortAlgorithm) {
@@ -22,8 +21,6 @@ function testSort(sortAlgorithm) {
     .fill(0)
     .map((_) => Math.floor(Math.random() * 200));
   const arrSort = sortAlgorithm(arr);
-  console.log("排序后有序数组 ", arrSort);
-  console.log("是否是正确的排序? ", isSorted(arrSort));
 }
 
 // testSort(bubbleSort);

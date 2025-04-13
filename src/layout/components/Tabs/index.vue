@@ -12,7 +12,7 @@
       <!-- 加载图标 -->
       <template #label>
         <div class="flex select-none items-center justify-center" @contextmenu.prevent="handleTabsMenuChildren(item.path, $event)">
-          <GlobalIcon class="mr-[2px]" v-show="item.icon" :name="item.icon" size="16"></GlobalIcon>
+          <!-- <GlobalIcon class="mr-[2px]" v-show="item.icon" :name="item.icon" size="16" /> -->
           <div>{{ getLanguage(globalStore.language, item?.title, item?.enName) }}</div>
         </div>
       </template>

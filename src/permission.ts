@@ -4,6 +4,7 @@ import { configSource, LOGIN_URL, ROUTER_WHITE_LIST } from "@/config";
 import nprogress from "@/utils/nprogress";
 import { MsgWarning } from "@/utils/notification";
 import { initDynamicRoutes } from "./router/dynamicRoutes";
+import { useRoute } from "vue-router";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
 router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
@@ -31,7 +32,6 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
     resetRouter();
     return next();
   }
-
   // 4、判断访问页面是否在路由白名单地址[静态路由]中，如果存在直接放行。
   if (ROUTER_WHITE_LIST.includes(to.path)) return next();
 

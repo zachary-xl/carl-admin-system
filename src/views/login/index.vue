@@ -39,7 +39,7 @@
           </div>
         </el-form-item> -->
         <el-form-item class="w-full">
-          <el-button :loading="loading" size="large" type="primary" v-throttle:3000="handleLogin" class="w-full">
+          <el-button :loading="loading" size="large" type="primary" @click="handleLogin" class="w-full">
             <span v-if="!loading">登 录</span>
             <span v-else>登 录 中...</span>
           </el-button>
@@ -59,6 +59,7 @@ import { MsgError, MsgWarning } from "@/utils/notification";
 import { postAuthLoginAPI } from "@/api";
 import type { FormInstance } from "element-plus";
 import type { TLoginForm } from "./types";
+import { setStorage } from "@/utils";
 
 const route = useRoute();
 const router = useRouter();
@@ -78,8 +79,8 @@ watch(
 );
 
 const loginForm = reactive<any>({
-  username: "admin",
-  password: "123456",
+  username: "",
+  password: "",
 });
 const loginRules = {
   username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
@@ -88,17 +89,17 @@ const loginRules = {
 };
 
 const handleLogin = async () => {
+  console.log(loginForm)
   formInstance.value?.validate(async (isValid, fields) => {
     if (isValid) {
       loading.value = true;
       try {
         // 1、执行登录接口
         const { data } = await postAuthLoginAPI(loginForm)
-
         // authStore.setUserInfoAction(data.user);
         // authStore.setTokenTypeAction(data.tokenType);
         authStore.setTokenAction(data.accessToken);
-
+        setStorage("accessToken", data.accessToken);
         // 2、添加动态路由 AND 用户按钮 AND 角色信息 AND 用户个人信息
         if (authStore?.token) {
           await initDynamicRoutes();

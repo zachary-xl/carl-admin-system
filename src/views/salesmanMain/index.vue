@@ -3,7 +3,7 @@
     <div class="header">
       <h2>家禽动物保健</h2>
       <div class="user-info">
-        <span>你好，{{ userName }}</span>
+        <span>你好，{{ name }}</span>
         <span class="logout" @click="handleLogout">退出</span>
       </div>
     </div>
@@ -13,16 +13,16 @@
     <div class="data-overview">
       <div class="data-card">
         <div class="data-label">我推荐的栋舍数</div>
-        <div class="data-value">{{ yearSuccess }}</div>
+        <div class="data-value">{{ userInfo.num }}</div>
       </div>
       <div class="data-card">
         <div class="data-label">成功投保的栋舍数</div>
-        <div class="data-value">{{ monthSuccess }}</div>
+        <div class="data-value">{{ userInfo.successNum }}</div>
       </div>
     </div>
     <div class="data-card flex justify-between items-center">
       <div class="data-label !mb-0">本年累计投保金额</div>
-      <div class="data-value">￥1000000</div>
+      <div class="data-value">￥{{ userInfo.yearMoney }}</div>
     </div>
 
     <div class="section-title">场户管理</div>
@@ -69,21 +69,17 @@
     </div>
 
     <div class="farm-list">
-      <div v-for="(farm, index) in filteredFarmList" :key="index" class="farm-item">
+      <div @click.stop="handleFarmClick(farm)" v-for="(farm, index) in farmList" :key="index" class="farm-item">
         <div class="farm-info">
           <div class="farm-name">{{ farm.name }}</div>
-          <div class="farm-contact">负责人姓名: {{ farm.contactPerson }}</div>
-          <div class="farm-location" v-if="farm.location">
-            标签: {{ farm.tag }}
-            <div>位置: {{ farm.location }}</div>
-          </div>
+          <div class="farm-contact">负责人姓名: {{ farm.contactPeople }}</div>
         </div>
         <div class="farm-actions">
           <div class="status-tag" :class="getStatusClass(farm.status)">
             {{ getStatusText(farm.status) }}
           </div>
-          <div class="share-btn" @click="shareFarm(farm)">
-            <i class="icon-share"></i> 分享渠道
+          <div class="share-btn" @click.stop="shareFarm(farm)">
+            <i class="icon-share"></i> 分享邀请投保
           </div>
         </div>
       </div>
@@ -91,122 +87,135 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
+import { getSalesmanMainAPI, getSalesShareLinkAPI } from '@/api/sales'
+import { getLivestockFarmListAPI } from '@/api'
+import { ElMessage } from 'element-plus'
 
-export default {
-  name: 'SalesmanMain',
-  components: {
-    Search
-  },
-  data() {
-    return {
-      userName: 'xxx', // 用户名，可以从登录信息或vuex中获取
-      yearSuccess: 500,
-      monthSuccess: 20,
-      farmList: [
-        {
-          name: 'XXX养殖场',
-          contactPerson: '13616697844',
-          status: 'pending' // 待渠道
-        },
-        {
-          name: 'XXX养殖场',
-          contactPerson: '13616697844',
-          status: 'unopened' // 未开
-        },
-        {
-          name: 'XXX养殖场',
-          contactPerson: '13616697844',
-          status: 'opened' // 已开
-        },
-        {
-          name: 'XXX养殖场',
-          contactPerson: '13616697844',
-          status: 'visited', // 已考察
-          tag: '标签5',
-          location: '32.29938,34.89932'
-        }
-      ],
-      filterStatus: '',
-      dateRange: '',
-      searchFarmName: '',
-      yearOptions: [2024, 2023, 2022]
+// 路由实例
+const router = useRouter()
+const route = useRoute()
+const id = route.query.id
+const name = route.query.name
+
+const userInfo = ref({})
+// 筛选条件
+const filterStatus = ref('')
+const dateRange = ref('')
+const searchFarmName = ref('')
+
+// 养殖场列表数据
+const farmList = ref([])
+const handleFarmClick = (farm) => {
+  console.log('点击养殖场:', farm)
+  router.push({
+    path: '/salesman-detail',
+    query: {
+      id: farm.id
     }
-  },
-  computed: {
-    yearOptions() {
-      const currentYear = new Date().getFullYear();
-      return Array.from({length: 5}, (_, i) => currentYear - i);
-    },
-    filteredFarmList() {
-      return this.farmList.filter(farm => {
-        // 状态筛选
-        if (this.filterStatus && farm.status !== this.filterStatus) {
-          return false;
-        }
+  })
+}
+// 获取状态对应的样式类
+const getStatusClass = (status) => {
+  const statusMap = {
+    0: 'status-pending',    // 待邀请
+    1: 'status-unopened',   // 未打开
+    2: 'status-opened',     // 已打开
+    3: 'status-visited'     // 已填写
+  }
+  return statusMap[status] || ''
+}
 
-        // 名称搜索
-        if (this.searchFarmName && !farm.name.includes(this.searchFarmName)) {
-          return false;
-        }
+// 获取状态对应的文本
+const getStatusText = (status) => {
+  const statusMap = {
+    0: '待邀请',
+    1: '未打开',
+    2: '已打开',
+    3: '已填写'
+  }
+  return statusMap[status] || ''
+}
 
-        // 日期筛选 - 使用时间戳
-        if (this.dateRange) {
-          // 如果没有日期数据，可以先跳过这部分筛选
-          if (!farm.createdAt) {
-            return true;
-          }
+// 分享养殖场
+const shareFarm = async (farm) => {
+  try {
+    // 构建分享链接 - 使用 hash 路由模式
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareUrl = `${baseUrl}#/farmers-form?id=${farm.id}`;
 
-          const farmDate = new Date(farm.createdAt);
-          const selectedDate = new Date(parseInt(this.dateRange));
-
-          // 检查年月是否匹配
-          if (farmDate.getFullYear() !== selectedDate.getFullYear() ||
-              farmDate.getMonth() !== selectedDate.getMonth()) {
-            return false;
-          }
-        }
-
-        return true;
+    // 如果状态是 0（待邀请），则调用 API 记录分享行为
+    if (farm.status === 0) {
+      // 调用 API 记录分享，但不等待结果
+      getSalesShareLinkAPI(String(farm.id)).catch(err => {
+        console.error('记录分享行为失败:', err);
       });
     }
-  },
-  methods: {
-    getStatusClass(status) {
-      const statusMap = {
-        pending: 'status-pending',
-        unopened: 'status-unopened',
-        opened: 'status-opened',
-        visited: 'status-visited'
-      }
-      return statusMap[status] || ''
-    },
-    getStatusText(status) {
-      const statusMap = {
-        pending: '待渠道',
-        unopened: '未开',
-        opened: '已开',
-        visited: '已考察'
-      }
-      return statusMap[status] || ''
-    },
-    shareFarm(farm) {
-      // 分享渠道的逻辑
-      console.log('分享渠道:', farm)
-    },
-    handleLogout() {
-      // 退出登录的逻辑
-      console.log('用户退出登录')
-      // 清除登录信息
-      // localStorage.removeItem('token')
-      // 跳转到登录页
-      this.$router.push('/salesman-login')
-    },
-    searchFarms() {
-      console.log('搜索养殖户:', this.searchFarmName);
-      console.log('选择的日期时间戳:', this.dateRange);
-    }
+
+    // 复制链接到剪贴板
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        ElMessage({
+          message: '链接已复制，可以分享给养殖户了',
+          type: 'success'
+        });
+        fetchFarmList()
+      })
+      .catch(err => {
+        console.error('复制失败:', err);
+        ElMessage({
+          message: '链接复制失败',
+          type: 'error'
+        });
+      });
+
+    console.log('分享邀请投保:', farm);
+  } catch (error) {
+    console.error('分享过程出错:', error);
+    ElMessage({
+      message: '分享过程出错',
+      type: 'error'
+    });
+  }
+}
+
+// 退出登录
+const handleLogout = () => {
+  console.log('用户退出登录')
+  // 清除登录信息
+  setStorage('salesmanToken', '')
+  // 跳转到登录页
+  router.push('/salesman-login')
+}
+
+// 搜索养殖户
+const searchFarms = () => {
+  console.log('搜索养殖户:', searchFarmName.value)
+  console.log('选择的日期时间戳:', dateRange.value)
+  // 可以在这里调用API获取数据
+}
+
+// 生命周期钩子
+onMounted(() => {
+  // 可以在这里获取初始数据
+  fetchFarmList()
+  fetchUserInfo()
+})
+
+const fetchUserInfo = async () => {
+  const { data } = await getSalesmanMainAPI(id)
+  userInfo.value = data
+}
+// 可以添加其他方法，如获取数据的API调用
+const fetchFarmList = async () => {
+  try {
+    const response = await getLivestockFarmListAPI({ noPage: true, employeeId: id });
+    farmList.value = response.data.list
+  } catch (error) {
+    console.error('获取养殖场列表失败:', error)
   }
 }
 </script>
@@ -277,7 +286,7 @@ export default {
   flex: 1;
   background-color: #e6f7ff;
   border-radius: 8px;
-  padding: 15px;
+  padding: 6px;
   margin: 0 5px;
   text-align: center;
 }
@@ -289,7 +298,7 @@ export default {
 }
 
 .data-value {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   color: #333;
 }

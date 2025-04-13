@@ -28,3 +28,65 @@ onMounted(() => {
   handleThemeConfig();
 });
 </script>
+
+<style scoped lang="scss">
+:deep(.el-button) {
+  height: 30px;
+  font-size: 12px;
+}
+
+:deep(.el-input) {
+  .el-input__wrapper {
+    box-shadow: none;
+    background-color: rgba(247, 248, 250, 1);
+    color: rgba(136, 136, 136, 1);
+    font-size: 12px !important;
+    position: relative;
+
+    .el-input__inner {
+      padding-right: 18px;
+    }
+
+    .el-input__suffix {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+:deep(.el-select) {
+  width: 220px !important;
+
+  .el-select__wrapper {
+    box-shadow: none;
+    background-color: rgba(247, 248, 250, 1);
+    color: rgba(136, 136, 136, 1);
+    font-size: 12px;
+  }
+}
+
+:deep(.el-date-editor.el-input__wrapper) {
+  background-color: rgba(247, 248, 250, 1);
+  color: rgba(136, 136, 136, 1);
+  width: 220px;
+  height: 30px;
+  box-shadow: none;
+
+  .el-range-input {
+    font-size: 12px !important;
+  }
+}
+
+:deep(.el-form-item__label) {
+  font-weight: 600;
+}
+
+:deep(.table-header) {
+  .cell {
+    font-weight: bolder !important;
+    white-space: nowrap !important;
+  }
+}
+</style>

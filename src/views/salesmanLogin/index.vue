@@ -1,8 +1,6 @@
 <template>
     <div class="login-container">
         <!-- 顶部标题区域 -->
-
-
         <!-- 表单区域 -->
         <div class="form-container">
             <div class="header">
@@ -57,6 +55,8 @@ import { defineComponent, reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Phone, Lock } from '@element-plus/icons-vue'
+import { postSalesmanLoginAPI } from '@/api/sales'
+import { setStorage } from '@/utils'
 
 export default defineComponent({
   name: 'SalesmanLogin',
@@ -95,17 +95,9 @@ export default defineComponent({
           loading.value = true
           try {
             // 这里替换为实际的登录API调用
-            // const res = await login(loginForm)
-
-            // 模拟登录请求
-            await new Promise(resolve => setTimeout(resolve, 1500))
-
-            // 登录成功后的处理
-            console.log('登录成功', loginForm)
-
+            const {data} = await postSalesmanLoginAPI(loginForm)
             // 存储登录状态
-            localStorage.setItem('salesmanPhone', loginForm.phone)
-            localStorage.setItem('salesmanToken', 'mock-token-' + Date.now())
+            setStorage('salesmanToken', data.accessToken)
 
             ElMessage({
               type: 'success',
@@ -113,7 +105,7 @@ export default defineComponent({
             })
 
             // 跳转到首页或其他页面
-            router.push('/')
+            router.push(`/salesman-main?id=${data.id}&name=${data.name}`)
           } catch (error) {
             console.error('登录失败:', error)
             ElMessage({
@@ -134,11 +126,6 @@ export default defineComponent({
       submitForm()
     }
 
-    // 页面加载时自动聚焦到手机号输入框
-    onMounted(() => {
-      // 可以在这里添加自动聚焦或其他初始化逻辑
-    })
-
     return {
       loginForm,
       loginRules,
@@ -156,7 +143,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f8f8;
 }
 
 .header {

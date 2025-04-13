@@ -116,7 +116,7 @@ const currentMarker = reactive({
 const textPanelStyle = computed(() => {
   if (activeMarkerIndex.value === null) return {}
 
-  const marker = markers.value[activeMarkerIndex.value]
+  const marker: any = markers.value[activeMarkerIndex.value]
   return {
     left: `${marker.x}px`,
     top: `${marker.y}px`,
@@ -133,7 +133,7 @@ const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (!target.files || target.files.length === 0) return
 
-  const file = target.files[0]
+  const file: any = target.files[0]
   const isImage = file.type.startsWith('image/')
   const isLt5M = file.size / 1024 / 1024 < 5
 
@@ -147,7 +147,7 @@ const handleFileChange = (event: Event) => {
   }
 
   // 创建本地临时URL
-  imageUrl.value = URL.createObjectURL(file)
+  imageUrl.value = URL.createObjectURL(file as any)
 
   // 重置标记和面板
   markers.value = []
@@ -342,7 +342,7 @@ const handleCanvasClick = (event: MouseEvent) => {
 
 const editMarker = (index: number) => {
   activeMarkerIndex.value = index
-  const marker = markers.value[index]
+  const marker: any = markers.value[index]
 
   // 复制标记内容到当前编辑对象
   currentMarker.title = marker.title
@@ -355,7 +355,7 @@ const editMarker = (index: number) => {
 
 const closeTextPanel = () => {
   if (activeMarkerIndex.value !== null) {
-    const marker = markers.value[activeMarkerIndex.value]
+    const marker: any = markers.value[activeMarkerIndex.value]
 
     // 如果是新创建的空标记并且没有填写内容，则删除
     if (!marker.title && !marker.description && !marker.remarks) {
@@ -370,7 +370,7 @@ const closeTextPanel = () => {
 
 const applyText = () => {
   if (activeMarkerIndex.value !== null) {
-    const marker = markers.value[activeMarkerIndex.value]
+    const marker: any = markers.value[activeMarkerIndex.value]
 
     // 更新标记内容
     marker.title = currentMarker.title

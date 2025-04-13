@@ -51,6 +51,11 @@ export default [
     component: () => import("@/views/farmersForm/index.vue"),
   },
   {
+    name: "FarmersDetail",
+    path: "/farmers-detail",
+    component: () => import("@/views/farmersDetail/index.vue"),
+  },
+  {
     name: "SalesmanLogin",
     path: "/salesman-login",
     component: () => import("@/views/salesmanLogin/index.vue"),
@@ -59,5 +64,10 @@ export default [
     name: "SalesmanMain",
     path: "/salesman-main",
     component: () => import("@/views/salesmanMain/index.vue"),
+  },
+  {
+    name: "SalesmanDetail",
+    path: "/salesman-detail",
+    component: () => import("@/views/salesmanDetail/index.vue"),
   }
 ] as unknown as RouteRecordRaw[];

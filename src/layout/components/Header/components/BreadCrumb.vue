@@ -4,7 +4,7 @@
       <transition-group name="breadcrumb">
         <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="item.path">
           <div class="el-breadcrumb__inner is-link" :class="{ 'item-no-icon': !item.meta.icon }" @click="handleBreadcrumb(item, index)">
-            <GlobalIcon class="breadcrumb-icon" v-if="item.meta.icon" :name="item.meta.icon" size="16"></GlobalIcon>
+            <!-- <GlobalIcon class="breadcrumb-icon" v-if="item.meta.icon" :name="item.meta.icon" size="16" /> -->
             <span class="breadcrumb-title">{{ getLanguage(globalStore.language, item.meta?.title, item.meta?.enName) }}</span>
           </div>
         </el-breadcrumb-item>
@@ -29,8 +29,8 @@ const authStore = useAuthStore();
 const breadcrumbList = computed(() => {
   const lastMatched = route.matched[route.matched.length - 1];
   let breadcrumbData = lastMatched ? authStore.getBreadcrumbList[lastMatched.path] ?? [] : [];
+
   // 子页面放置静态路由里面, activeMenu不存在值的时候，不符合子路由数据，则返回首页
-  console.log(breadcrumbData);
   // if (breadcrumbData[0].path === STATIC_URL && !breadcrumbData[1].meta?.activeMenu) {
   //   if (globalStore.language === "en") {
   //     // 英文

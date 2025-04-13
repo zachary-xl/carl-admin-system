@@ -11,6 +11,6 @@ export const STATIC_URL: string = "/system/static";
 // 登录页地址[默认]
 export const LOGIN_URL: string = "/login";
 // 路由白名单地址[本地存在的路由 staticRouter.ts 中]
-export const ROUTER_WHITE_LIST: string[] = ["/401", "/404", "/farmers_form", "/salesman-login", "/salesman-main"];
+export const ROUTER_WHITE_LIST: string[] = ["/401", "/404", "/farmers-form", "/farmers-detail", "/salesman-login", "/salesman-main", "/salesman-detail"];
 // Svg本地图片使用 s- 开头才会生效
 export const SVG_PREFIX: string = "s-";

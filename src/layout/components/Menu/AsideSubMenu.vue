@@ -4,7 +4,7 @@
     <!-- 非叶子节点 -->
     <el-sub-menu v-if="item.children?.length" :index="item.path">
       <template #title>
-        <GlobalIcon v-if="item.meta.icon" :name="item.meta.icon" size="18"></GlobalIcon>
+        <!-- <GlobalIcon v-if="item.meta.icon" :name="item.meta.icon" size="18" /> -->
         <el-tooltip :content="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)" :show-after="2000" placement="right">
           <span class="menu-ellipsis" v-text="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)"></span>
         </el-tooltip>
@@ -13,7 +13,7 @@
     </el-sub-menu>
     <!-- 叶子节点[功能节点] -->
     <el-menu-item v-else :index="item.path" @click="handleMenuRouter(item)">
-      <GlobalIcon v-if="item.meta.icon" :name="item.meta.icon" size="18"></GlobalIcon>
+      <!-- <GlobalIcon v-if="item.meta.icon" :name="item.meta.icon" size="18" /> -->
       <template #title>
         <el-tooltip :content="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)" :show-after="2000" placement="right">
           <span class="menu-ellipsis" v-text="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)"></span>

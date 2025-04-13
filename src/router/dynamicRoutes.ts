@@ -25,8 +25,6 @@ export const initDynamicRoutes = async () => {
       //   // 扁平化路由也需要构造component路由函数
       //   item.component = modules["/src/views/" + item.component + ".vue"];
       // }
-      console.log("item", item);
-
       if (item.isFull == "0") {
         // 如果是全屏的话，直接为整个页面
         router.addRoute(item);
@@ -35,7 +33,6 @@ export const initDynamicRoutes = async () => {
       }
     });
   } catch (error) {
-    console.log(error);
     // 当菜单请求出错时，重定向到登陆页
     authStore.setTokenAction("");
     router.replace(LOGIN_URL);

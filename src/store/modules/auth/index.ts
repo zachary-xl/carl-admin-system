@@ -49,7 +49,6 @@ export default defineStore("auth", {
     },
     // 获取角色数据 AND 按钮数据 AND 用户信息
     async getLoginUserInfoAction() {
-      console.log("用户信息数据", authUser.data);
       this.roleList = authUser.data.roles;
       this.buttonList = authUser.data.buttons;
       this.loginUser = authUser.data.loginUser;
