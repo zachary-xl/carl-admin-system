@@ -30,11 +30,12 @@
                 <el-button type="primary" class="add-btn" @click="handleAddInsurance">新增</el-button>
             </div>
 
-            <el-table :data="insuranceData" class="w-full" header-cell-class-name="table-header">
+            <el-table :data="insuranceData" class="w-full">
                 <el-table-column prop="name" label="名称" align="center" />
                 <el-table-column label="卫星云图" align="center">
                     <template #default="scope">
-                        <img v-if="scope.row.satelliteMapUrl" :src="scope.row.satelliteMapUrl" class="w-[100px]" />
+                        <el-image @click="handlePreview(scope.row.satelliteMapUrl)"
+                            v-if="scope.row.satelliteMapUrl" :src="scope.row.satelliteMapUrl" class="w-[100px]" />
                     </template>
                 </el-table-column>
                 <el-table-column prop="date" label="今日日龄" align="center">
@@ -75,6 +76,11 @@
         </div>
         <DetailFormComp ref="detailFormRef" :config="detailConfig" v-if="detailFormVisible" :visible="detailFormVisible"
             @submit="handleSubmit" @close="detailFormVisible = false" />
+            <el-image-viewer
+        v-if="showPreview"
+        :url-list="srcList"
+        @close="showPreview = false"
+      />
     </div>
 </template>
 
@@ -96,7 +102,12 @@ const router = useRouter();
 const id = +route.query.id;
 const farmerInfo = ref({});
 const mapRef = ref(null);
-
+const showPreview = ref(false)
+const srcList = ref([])
+const handlePreview = (url)=>{
+    srcList.value = [url]
+showPreview.value = true;
+}
 const initMap = () => {
     var center = new qq.maps.LatLng(farmerInfo.value.latitude || 22.3193292, farmerInfo.value.longitude || 114.1694229);
     var map = new qq.maps.Map(mapRef.value, {

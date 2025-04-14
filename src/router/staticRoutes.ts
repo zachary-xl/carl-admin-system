@@ -49,25 +49,45 @@ export default [
     name: "FarmersForm",
     path: "/farmers-form",
     component: () => import("@/views/farmersForm/index.vue"),
+    meta: {
+      title: "信息填报",
+      enName: "Farmers Form"
+    }
   },
   {
     name: "FarmersDetail",
     path: "/farmers-detail",
     component: () => import("@/views/farmersDetail/index.vue"),
+    meta: {
+      title: "养殖户详情",
+      enName: "Farmers Detail"
+    }
   },
   {
     name: "SalesmanLogin",
     path: "/salesman-login",
     component: () => import("@/views/salesmanLogin/index.vue"),
+    meta: {
+      title: "业务员登录",
+      enName: "Salesman Login"
+    }
   },
   {
     name: "SalesmanMain",
     path: "/salesman-main",
     component: () => import("@/views/salesmanMain/index.vue"),
+    meta: {
+      title: "业务员管理",
+      enName: "Salesman Main"
+    }
   },
   {
     name: "SalesmanDetail",
     path: "/salesman-detail",
     component: () => import("@/views/salesmanDetail/index.vue"),
+    meta: {
+      title: "业务员详情",
+      enName: "Salesman Detail"
+    }
   }
 ] as unknown as RouteRecordRaw[];

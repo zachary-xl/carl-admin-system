@@ -64,7 +64,8 @@
 
                 <div class="flex mt-3">
                     <div class="pen-image w-24 h-24 mr-4">
-                        <el-image :src="pen.satelliteMapUrl" fit="cover" class="w-full h-full rounded-md"></el-image>
+                        <el-image @click="handlePreview(pen.satelliteMapUrl)" :src="pen.satelliteMapUrl" fit="cover"
+                            class="w-full h-full rounded-md"></el-image>
                     </div>
                     <div class="pen-info flex-1">
                         <div class="info-row py-1">今日日龄：{{ calculateDaysFromTimestamp(pen.date) || 15 }}</div>
@@ -83,6 +84,7 @@
                 </div>
             </div>
         </div>
+        <el-image-viewer v-if="showPreview" :url-list="srcList" @close="showPreview = false" />
     </div>
 </template>
 
@@ -99,7 +101,13 @@ const id = route.query.id
 const farmerInfo = ref<any>({})
 
 const penList = ref<any>([])
+const showPreview = ref(false)
+const srcList = ref<string[]>([])
 
+const handlePreview = (url: string)=>{
+    srcList.value = [url]
+showPreview.value = true;
+}
 const blobToBase64 = (blob) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();

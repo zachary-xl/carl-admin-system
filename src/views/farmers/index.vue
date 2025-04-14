@@ -67,6 +67,7 @@
                 <template #default="{ row }">
                     <el-button type="primary" link @click="handleDetail(row)"> 详情</el-button>
                     <el-button type="primary" link @click="handleEdit(row)"> 编辑</el-button>
+                    <el-button type="primary" link @click="handleDelete(row)"> 删除</el-button>
                     <el-button type="primary" link @click="handleAssign(row)"> 分配业务员</el-button>
                 </template>
             </el-table-column>
@@ -96,8 +97,8 @@
 </template>
 
 <script setup lang="ts">
-import { getLivestockFarmListAPI, getEmployeeListAPI, putLivestockFarmUpdateEmployeeAPI } from '@/api';
-import { ElMessage } from 'element-plus';
+import { getLivestockFarmListAPI, getEmployeeListAPI, putLivestockFarmUpdateEmployeeAPI, postLivestockFarmDeleteAPI } from '@/api';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import FormComp from './components/FormComp.vue';
 import { useRouter } from 'vue-router';
 
@@ -204,6 +205,23 @@ const handleDetail = (row: any) => {
             id: row.id
         }
     });
+};
+
+const handleDelete = (row: any) => {
+    ElMessageBox.confirm(
+        `确认删除选中的数据吗？`,
+        '警告',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }
+    ).then(() => {
+        postLivestockFarmDeleteAPI(row.id).then(() => {
+            ElMessage.success('删除成功');
+            getList();
+        });
+    })
 };
 
 const handleEdit = (row: any) => {

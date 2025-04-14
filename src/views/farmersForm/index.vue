@@ -50,7 +50,7 @@
         <div v-for="(house, index) in formData.list" :key="index" class="relative border rounded mb-2">
           <div class="mb-3 mt-4">
             <div class="mb-1">栋舍数量</div>
-            <el-input v-model="house.num" placeholder="请输入" type="number" min="1" />
+            <el-input-number v-model="house.num" :min="1" placeholder="请输入" />
           </div>
 
           <div class="mb-2">

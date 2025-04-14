@@ -122,3 +122,10 @@ export const postEmployeeDeleteAPI = (idList: string[]) => {
     }
   });
 };
+
+export const postLivestockFarmDeleteAPI = (id: any) => {
+  return request.delete<any>({
+    url: `/farm_animal_insurance/api/v1/livestock_farm/delete/${id}`,
+  });
+};
+

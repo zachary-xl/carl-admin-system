@@ -179,6 +179,7 @@ const handleTabsMenuChildren = (path: any, value: any) => {
   /* @apply dark:border-#313233; */
   // 色弱模式
   background-color: var(--el-bg-color);
+  z-index: 1;
 }
 :deep(.el-tabs__item:first-child) {
   margin-left: 8px;

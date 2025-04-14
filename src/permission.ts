@@ -17,6 +17,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
   if (globalStore.language === "en") {
     document.title = to.meta.enName || configSource.enSystemTitle;
   } else {
+    console.log(to.meta.title, configSource.systemTitle);
     document.title = to.meta.title || configSource.systemTitle;
   }
 

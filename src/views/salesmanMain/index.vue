@@ -28,43 +28,26 @@
     <div class="section-title">场户管理</div>
 
     <div class="filter-section">
-      <div class="filter-row">
-        <div class="filter-item">
-          <span class="filter-label">保险状态</span>
-          <el-select v-model="filterStatus" placeholder="全部" clearable class="filter-select">
-            <el-option label="全部" value=""></el-option>
-            <el-option label="待渠道" value="pending"></el-option>
-            <el-option label="未开" value="unopened"></el-option>
-            <el-option label="已开" value="opened"></el-option>
-            <el-option label="已考察" value="visited"></el-option>
-          </el-select>
-        </div>
-        <div class="filter-item">
-          <span class="filter-label">选择日期</span>
-          <el-date-picker
-            v-model="dateRange"
-            type="month"
-            placeholder="选择月份"
-            format="YYYY/MM"
-            value-format="x"
-            clearable
-            class="filter-date-picker"
-          />
-        </div>
+      <div class="filter-item mb-2">
+        <span class="filter-label w-[100px] flex-shrink-0">保险状态</span>
+        <el-select v-model="searchParams.insure_status" placeholder="全部" clearable class="filter-select">
+          <el-option label="全部" value=""></el-option>
+          <el-option label="未到达" :value="0"></el-option>
+          <el-option label="已投保" :value="1"></el-option>
+        </el-select>
       </div>
-      <div class="search-row">
-        <el-input
-          v-model="searchFarmName"
-          placeholder="请输入养殖户名称"
-          class="search-input"
-          clearable
-        >
-          <template #append>
-            <el-button @click="searchFarms">
-              <el-icon><Search /></el-icon>
-            </el-button>
-          </template>
-        </el-input>
+      <div class="filter-item my-2">
+        <span class="filter-label w-[100px] flex-shrink-0">选择日期</span>
+        <el-date-picker v-model="searchParams.date" type="month" placeholder="选择月份" format="YYYY/MM" value-format="x" clearable
+          class="filter-date-picker" />
+      </div>
+      <div class="filter-item my-2">
+        <span class="filter-label w-[100px] flex-shrink-0">养殖户名称</span>
+        <el-input v-model="searchParams.name" placeholder="请输入养殖户名称" class="search-input" clearable />
+      </div>
+      <div class="flex justify-end">
+        <el-button type="primary" plain @click="handleSearch">新增</el-button>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
       </div>
     </div>
 
@@ -88,12 +71,13 @@
 </template>
 
 <script setup>
+import dayjs from 'dayjs'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search } from '@element-plus/icons-vue'
 import { getSalesmanMainAPI, getSalesShareLinkAPI } from '@/api/sales'
 import { getLivestockFarmListAPI } from '@/api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { setStorage } from '@/utils/storage'
 
 // 路由实例
 const router = useRouter()
@@ -103,9 +87,11 @@ const name = route.query.name
 
 const userInfo = ref({})
 // 筛选条件
-const filterStatus = ref('')
-const dateRange = ref('')
-const searchFarmName = ref('')
+const searchParams = ref({
+  insure_status: null,
+  date: dayjs().valueOf(),
+  name: ''
+})
 
 // 养殖场列表数据
 const farmList = ref([])
@@ -117,6 +103,10 @@ const handleFarmClick = (farm) => {
       id: farm.id
     }
   })
+}
+const handleSearch = () => {
+  console.log('搜索条件:', searchParams.value)
+  fetchFarmList()
 }
 // 获取状态对应的样式类
 const getStatusClass = (status) => {
@@ -150,27 +140,32 @@ const shareFarm = async (farm) => {
     // 如果状态是 0（待邀请），则调用 API 记录分享行为
     if (farm.status === 0) {
       // 调用 API 记录分享，但不等待结果
-      getSalesShareLinkAPI(String(farm.id)).catch(err => {
+      getSalesShareLinkAPI(String(farm.id)).then(() => {
+        fetchFarmList()
+        fetchUserInfo()
+      }).catch(err => {
         console.error('记录分享行为失败:', err);
       });
     }
 
-    // 复制链接到剪贴板
-    navigator.clipboard.writeText(shareUrl)
-      .then(() => {
-        ElMessage({
-          message: '链接已复制，可以分享给养殖户了',
-          type: 'success'
+    // 尝试使用现代 Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareUrl)
+        .then(() => {
+          ElMessage({
+            message: '链接已复制，可以分享给养殖户了',
+            type: 'success'
+          });
+          fetchFarmList();
+        })
+        .catch(err => {
+          console.error('现代复制API失败，尝试备用方法:', err);
+          fallbackCopyTextToClipboard(shareUrl, fetchFarmList);
         });
-        fetchFarmList()
-      })
-      .catch(err => {
-        console.error('复制失败:', err);
-        ElMessage({
-          message: '链接复制失败',
-          type: 'error'
-        });
-      });
+    } else {
+      // 对于不支持 Clipboard API 的浏览器，使用备用方法
+      fallbackCopyTextToClipboard(shareUrl, fetchFarmList);
+    }
 
     console.log('分享邀请投保:', farm);
   } catch (error) {
@@ -180,6 +175,64 @@ const shareFarm = async (farm) => {
       type: 'error'
     });
   }
+}
+
+// 备用复制方法
+const fallbackCopyTextToClipboard = (text, callback = null) => {
+  try {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+
+    // 设置样式使元素不可见
+    textArea.style.position = 'fixed';
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.width = '2em';
+    textArea.style.height = '2em';
+    textArea.style.padding = '0';
+    textArea.style.border = 'none';
+    textArea.style.outline = 'none';
+    textArea.style.boxShadow = 'none';
+    textArea.style.background = 'transparent';
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textArea);
+
+    if (successful) {
+      ElMessage({
+        message: '链接已复制，可以分享给养殖户了',
+        type: 'success'
+      });
+      if (callback) callback();
+    } else {
+      ElMessage({
+        message: '链接复制失败，请手动复制',
+        type: 'warning'
+      });
+      // 显示链接供用户手动复制
+      showLinkForManualCopy(text);
+    }
+  } catch (err) {
+    console.error('备用复制方法失败:', err);
+    ElMessage({
+      message: '链接复制失败，请手动复制',
+      type: 'error'
+    });
+    // 显示链接供用户手动复制
+    showLinkForManualCopy(text);
+  }
+}
+
+// 显示链接供用户手动复制
+const showLinkForManualCopy = (link) => {
+  ElMessageBox.alert(link, '请手动复制以下链接', {
+    confirmButtonText: '确定',
+    callback: () => {}
+  });
 }
 
 // 退出登录
@@ -286,7 +339,7 @@ const fetchFarmList = async () => {
   flex: 1;
   background-color: #e6f7ff;
   border-radius: 8px;
-  padding: 6px;
+  padding: 6px 20px;
   margin: 0 5px;
   text-align: center;
 }

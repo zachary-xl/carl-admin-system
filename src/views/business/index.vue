@@ -15,10 +15,15 @@
                 <el-button type="primary" icon="plus" plain @click="onHandleCreate">新增</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="danger" icon="delete" plain :disabled="selectedRows.length === 0" @click="handleBatchDelete">批量删除</el-button>
+                <el-button type="primary" plain @click="onHandleLink"> 业务员链接</el-button>
+            </el-col>
+            <el-col :span="1.5">
+                <el-button type="danger" icon="delete" plain :disabled="selectedRows.length === 0"
+                    @click="handleBatchDelete">批量删除</el-button>
             </el-col>
         </el-row>
-        <el-table :data="tableData" class="w-full" header-cell-class-name="table-header" @selection-change="handleSelectionChange">
+        <el-table :data="tableData" class="w-full" header-cell-class-name="table-header"
+            @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" />
             <el-table-column type="index" label="序号" align="center" width="80" />
             <el-table-column prop="name" label="姓名" align="center" :formatter="normalFormatter" />
@@ -31,7 +36,6 @@
             <el-table-column label="操作" align="center" width="200">
                 <template #default="{ row }">
                     <el-button type="primary" link @click="onHandleEdit(row)"> 编辑</el-button>
-                    <el-button type="primary" link @click="onHandleLink(row)"> 业务员链接</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -65,25 +69,84 @@ const paginationParams = reactive({
 const dialogVisible = ref(false);
 const tableData = ref<any[]>([]);
 const selectedRows = ref<any[]>([]);
-const onHandleLink = (row: any) => {
-    console.log(row);
+const onHandleLink = () => {
     const baseUrl = window.location.origin + window.location.pathname;
-    const shareUrl = `${baseUrl}#/salesman-main?id=${row.id}`;
-    // 复制链接到剪贴板
-    navigator.clipboard.writeText(shareUrl)
-        .then(() => {
+    const shareUrl = `${baseUrl}#/salesman-login`;
+
+    // 尝试使用现代 Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => {
+                ElMessage({
+                    message: '链接已复制，可以分享给养殖户了',
+                    type: 'success'
+                });
+            })
+            .catch(err => {
+                console.error('现代复制API失败，尝试备用方法:', err);
+                fallbackCopyTextToClipboard(shareUrl);
+            });
+    } else {
+        // 对于不支持 Clipboard API 的浏览器，使用备用方法
+        fallbackCopyTextToClipboard(shareUrl);
+    }
+}
+
+// 备用复制方法
+const fallbackCopyTextToClipboard = (text: string) => {
+    try {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+
+        // 设置样式使元素不可见
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+        textArea.style.padding = '0';
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        textArea.style.background = 'transparent';
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (successful) {
             ElMessage({
                 message: '链接已复制，可以分享给养殖户了',
                 type: 'success'
             });
-        })
-        .catch(err => {
-            console.error('复制失败:', err);
+        } else {
             ElMessage({
-                message: '链接复制失败',
-                type: 'error'
+                message: '链接复制失败，请手动复制',
+                type: 'warning'
             });
+            // 显示链接供用户手动复制
+            showLinkForManualCopy(text);
+        }
+    } catch (err) {
+        console.error('备用复制方法失败:', err);
+        ElMessage({
+            message: '链接复制失败，请手动复制',
+            type: 'error'
         });
+        // 显示链接供用户手动复制
+        showLinkForManualCopy(text);
+    }
+}
+
+// 显示链接供用户手动复制
+const showLinkForManualCopy = (link: string) => {
+    ElMessageBox.alert(link, '请手动复制以下链接', {
+        confirmButtonText: '确定',
+        callback: () => {}
+    });
 }
 const resetForm = () => {
     searchForm.value.resetFields();

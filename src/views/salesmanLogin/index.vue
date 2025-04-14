@@ -42,16 +42,11 @@
                 </el-form-item>
             </el-form>
         </div>
-
-        <!-- 底部版权信息 -->
-        <div class="footer">
-            <p>©家禽管理系统 版权所有</p>
-        </div>
     </div>
 </template>
 
 <script>
-import { defineComponent, reactive, ref, onMounted } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Phone, Lock } from '@element-plus/icons-vue'

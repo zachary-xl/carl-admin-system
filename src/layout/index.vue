@@ -57,7 +57,7 @@ const menuHoverCollapse = ref(settings.asideMenuHoverCollapse);
   width: 100vw;
   height: 100vh;
   .layout-aside {
-    z-index: $layout-aside-z-index; // 左侧菜单层级
+    /* z-index: $layout-aside-z-index; // 左侧菜单层级 */
     padding-right: $aside-menu-padding-right; // 左侧布局右边距[用于悬浮和选中更明显]
     padding-left: $aside-menu-padding-left; // 左侧布局左边距[用于悬浮和选中更明显]
     background-color: var(--el-menu-bg-color);
