@@ -1,11 +1,11 @@
 import request from "@/service";
 
 export const postAuthLoginAPI = (data: any) => {
-    return request.post<any>({
-      url: "/farm_animal_insurance/api/v1/admin_user/password/login",
-      data
-    });
-}
+  return request.post<any>({
+    url: "/farm_animal_insurance/api/v1/admin_user/password/login",
+    data
+  });
+};
 export const getEmployeeListAPI = (params: any) => {
   return request.get<any>({
     url: "/farm_animal_insurance/api/v1/employee/list",
@@ -110,8 +110,15 @@ export const postFileUploadAPI = (data: any) => {
 export const getFileDownloadAPI = (id: any) => {
   return request.get<any>({
     url: `/farm_animal_insurance/api/v1/file/download/${id}`,
-    responseType: 'blob'
+    responseType: "blob"
   });
 };
 
-
+export const postEmployeeDeleteAPI = (idList: string[]) => {
+  return request.delete<any>({
+    url: `/farm_animal_insurance/api/v1/employee/delete`,
+    data: {
+      idList
+    }
+  });
+};

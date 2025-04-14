@@ -1,5 +1,5 @@
 <template>
-    <div class="farmer-detail px-[20px]">
+    <div class="farmer-detail px-[20px] pb-[20px]">
         <!-- 基础信息区域 -->
         <div class="flex items-center justify-end mt-4">
             <el-button type="primary" plain icon="ArrowLeft" @click="goBack">返回上一级</el-button>
@@ -34,7 +34,7 @@
                 <el-table-column prop="name" label="名称" align="center" />
                 <el-table-column label="卫星云图" align="center">
                     <template #default="scope">
-                        <img :src="scope.row.satelliteMapUrl" class="w-[100px]" />
+                        <img v-if="scope.row.satelliteMapUrl" :src="scope.row.satelliteMapUrl" class="w-[100px]" />
                     </template>
                 </el-table-column>
                 <el-table-column prop="date" label="今日日龄" align="center">
@@ -74,7 +74,7 @@
             <div style="width: 100%; height: 100%;" id="map" ref="mapRef"></div>
         </div>
         <DetailFormComp ref="detailFormRef" :config="detailConfig" v-if="detailFormVisible" :visible="detailFormVisible"
-            @submit="handleSubmit" />
+            @submit="handleSubmit" @close="detailFormVisible = false" />
     </div>
 </template>
 
@@ -230,9 +230,11 @@ const getLivestockFarmDwellingHouseList = () => {
     }).then((res) => {
         insuranceData.value = res.data.list;
         insuranceData.value.map(async (item) => {
-            const file = await getFileDownloadAPI(item.fileId);
-            const url = await blobToBase64(file);
-            item.satelliteMapUrl = url;
+            if (item.fileId) {
+                const file = await getFileDownloadAPI(item.fileId);
+                const url = await blobToBase64(file);
+                item.satelliteMapUrl = url;
+            }
         });
     });
 }

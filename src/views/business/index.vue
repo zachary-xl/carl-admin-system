@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { getEmployeeListAPI } from '@/api';
+import { getEmployeeListAPI, postEmployeeDeleteAPI } from '@/api';
 import FormComp from './components/FormComp.vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 
@@ -130,11 +130,11 @@ const handleBatchDelete = () => {
         }
     ).then(() => {
         // 这里添加批量删除的API调用
-        // const ids = selectedRows.value.map(row => row.id);
-        // deleteEmployeesAPI(ids).then(() => {
-        //     ElMessage.success('删除成功');
-        //     getList();
-        // });
+        const ids = selectedRows.value.map(row => row.id);
+        postEmployeeDeleteAPI(ids).then(() => {
+            ElMessage.success('删除成功');
+            getList();
+        });
 
         // 临时提示，需要替换为实际API调用
         ElMessage.success('批量删除功能需要对接后端API');

@@ -35,7 +35,7 @@
                 <el-upload :show-file-list="false" drag list-type="picture-card" :http-request="onCustomUpload"
                     :on-success="onHandleSuccessAvatar" :on-remove="() => formData.fileId = ''" class="h-full w-full">
                     <el-image v-if="formData.fileId" :src="imageUrl" fit="contain" class="h-full w-full" />
-                    <el-icon v-else class="avatar-uploader-icon">
+                    <el-icon v-else class="avatar-uploader-icon" size="20">
                         <Plus />
                     </el-icon>
                 </el-upload>
@@ -172,6 +172,9 @@ onMounted(() => {
     padding: 0;
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .avatar-uploader .el-upload {
     border: 1px dashed var(--el-border-color);
