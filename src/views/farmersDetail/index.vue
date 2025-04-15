@@ -61,7 +61,6 @@
                         {{ getPenStatusText(pen.status) }}
                     </el-tag>
                 </div>
-
                 <div class="flex mt-3">
                     <div class="pen-image w-24 h-24 mr-4">
                         <el-image @click="handlePreview(pen.satelliteMapUrl)" :src="pen.satelliteMapUrl" fit="cover"

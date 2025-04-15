@@ -22,13 +22,13 @@
             </el-form-item>
             <el-form-item label="保险状态" prop="insure_status">
                 <el-select v-model="queryParams.insure_status" placeholder="请选择保险状态" clearable>
-                    <el-option label="未投保" :value="0" />
-                    <el-option label="已投保" :value="1" />
+                    <el-option label="计划投保" :value="0" />
+                    <el-option label="投保到期" :value="1" />
                 </el-select>
             </el-form-item>
             <el-form-item label="引种日期" prop="date">
-                <el-date-picker v-model="queryParams.date" type="daterange" range-separator="至" start-placeholder="开始日期"
-                    end-placeholder="结束日期" value-format="YYYY-MM-DD" />
+                <el-date-picker v-model="queryParams.date" type="month" placeholder="选择月份" format="YYYY/MM"
+                    value-format="x" clearable />
             </el-form-item>
             <el-form-item>
                 <el-button text bg icon="refreshLeft" @click="resetQuery">重置</el-button>
@@ -42,10 +42,11 @@
             </el-col>
             <el-col :span="1.5">
                 <el-button type="primary" icon="user" plain @click="handleBatchAssign"
-                           :disabled="selectedRows.length === 0">批量分配业务员</el-button>
+                    :disabled="selectedRows.length === 0">批量分配业务员</el-button>
             </el-col>
         </el-row>
-        <el-table :data="tableData" class="w-full" header-cell-class-name="table-header" @selection-change="handleSelectionChange">
+        <el-table :data="tableData" class="w-full" header-cell-class-name="table-header"
+            @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" />
             <el-table-column type="index" label="序号" align="center" width="80" />
             <el-table-column prop="name" label="养殖户名称" align="center" :formatter="normalFormatter" />
@@ -76,7 +77,8 @@
             v-model:page-size="paginationParams.page_size" :page-sizes="[10, 30, 50, 100]" background :total="total"
             layout="total, sizes, prev, pager, next, jumper" @size-change="(val) => (paginationParams.page_size = val)"
             @current-change="(val) => (paginationParams.page = val)" @change="getList" />
-        <el-dialog v-model="assignDialogVisible" title="分配业务员" width="30%" :before-close="() => (assignDialogVisible = false)">
+        <el-dialog v-model="assignDialogVisible" title="分配业务员" width="30%"
+            :before-close="() => (assignDialogVisible = false)">
             <el-form :model="assignForm" label-width="100px">
                 <el-form-item label="业务员">
                     <el-select v-model="assignForm.employeeId" placeholder="请选择业务员" filterable style="width: 100%">
@@ -119,7 +121,7 @@ const queryParams = reactive({
     employeeId: undefined,
     status: undefined,
     insure_status: undefined,
-    date: [] as string[]
+    date: ""
 });
 const dialogVisible = ref(false);
 const tableData = ref<any[]>([]);
@@ -167,8 +169,7 @@ const getList = () => {
         employeeId: queryParams.employeeId,
         status: queryParams.status,
         insure_status: queryParams.insure_status,
-        start_date: queryParams.date && queryParams.date.length > 0 ? queryParams.date[0] : undefined,
-        end_date: queryParams.date && queryParams.date.length > 1 ? queryParams.date[1] : undefined
+        date: queryParams.date
     };
     getLivestockFarmListAPI(params).then((res) => {
         tableData.value = res.data.list;
@@ -187,7 +188,7 @@ const resetQuery = () => {
     queryParams.employeeId = undefined;
     queryParams.status = undefined;
     queryParams.insure_status = undefined;
-    queryParams.date = [];
+    queryParams.date = "";
     handleQuery();
 };
 

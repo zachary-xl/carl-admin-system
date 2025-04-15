@@ -30,23 +30,23 @@
     <div class="filter-section">
       <div class="filter-item mb-2">
         <span class="filter-label w-[100px] flex-shrink-0">保险状态</span>
-        <el-select v-model="searchParams.insure_status" placeholder="全部" clearable class="filter-select">
-          <el-option label="全部" value=""></el-option>
-          <el-option label="未到达" :value="0"></el-option>
-          <el-option label="已投保" :value="1"></el-option>
+        <el-select v-model="searchParams.insure_status" placeholder="保险状态" clearable class="filter-select">
+          <el-option label="计划投保" :value="0" />
+          <el-option label="投保到期" :value="1" />
         </el-select>
       </div>
       <div class="filter-item my-2">
         <span class="filter-label w-[100px] flex-shrink-0">选择日期</span>
-        <el-date-picker v-model="searchParams.date" type="month" placeholder="选择月份" format="YYYY/MM" value-format="x" clearable
-          class="filter-date-picker" />
+        <el-date-picker v-model="searchParams.date" type="month" placeholder="选择月份" format="YYYY/MM" value-format="x"
+          clearable class="filter-date-picker" />
       </div>
       <div class="filter-item my-2">
         <span class="filter-label w-[100px] flex-shrink-0">养殖户名称</span>
         <el-input v-model="searchParams.name" placeholder="请输入养殖户名称" class="search-input" clearable />
       </div>
       <div class="flex justify-end">
-        <el-button type="primary" plain @click="handleSearch">新增</el-button>
+        <el-button type="info" plain @click="handleReset">重置</el-button>
+        <el-button type="primary" plain @click="handleAddFarm">新增</el-button>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
       </div>
     </div>
@@ -67,18 +67,77 @@
         </div>
       </div>
     </div>
+
+    <!-- 新增养殖户对话框 -->
+    <el-dialog v-model="addFarmDialogVisible" title="新增养殖户" width="90%" :close-on-click-modal="false">
+      <el-form :model="farmForm" label-width="100px" :rules="formRules" ref="farmFormRef">
+        <el-form-item label="养殖户名称" prop="name">
+          <el-input v-model="farmForm.name" placeholder="请输入养殖户名称" />
+        </el-form-item>
+        <el-form-item label="区域协赔员" prop="assistantUserName">
+          <el-input v-model="farmForm.assistantUserName" placeholder="请输入区域协赔员" />
+        </el-form-item>
+        <el-form-item label="协赔员手机号" prop="assistantUserPhone">
+          <el-input v-model="farmForm.assistantUserPhone" placeholder="请输入区域协赔员手机号码" />
+        </el-form-item>
+        <el-form-item label="负责人" prop="contactPeople">
+          <el-input v-model="farmForm.contactPeople" placeholder="请输入负责人" />
+        </el-form-item>
+        <el-form-item label="联系电话" prop="contactPhone">
+          <el-input v-model="farmForm.contactPhone" placeholder="请输入联系电话" />
+        </el-form-item>
+        <el-form-item label="位置" prop="location">
+          <div class="location-input">
+            <div>{{ locationText }}</div>
+            <el-button type="primary" @click="handleLocation">选择位置</el-button>
+          </div>
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="farmForm.status" placeholder="请选择状态" style="width: 100%">
+            <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="addFarmDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitFarmForm" :loading="submitting">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog title="选择位置" v-model="showMapDialog" width="90%" height="600px" append-to-body destroy-on-close>
+      <div style="height: 500px; width: 100%;">
+        <div id="map" style="height: 100%; width: 100%;"></div>
+      </div>
+      <div class="selected-location" v-if="farmForm.latitude && farmForm.longitude">
+        已选位置: 经度 {{ farmForm.longitude }}, 纬度 {{ farmForm.latitude }}
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="showMapDialog = false">取消</el-button>
+          <el-button type="primary" @click="confirmLocation">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import dayjs from 'dayjs'
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { getSalesmanMainAPI, getSalesShareLinkAPI } from '@/api/sales'
-import { getLivestockFarmListAPI } from '@/api'
+import { getLivestockFarmListAPI, postLivestockFarmCreateAPI } from '@/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { setStorage } from '@/utils/storage'
 
+// 状态选项
+const statusOptions = [
+  { value: 0, label: '待邀请' },
+  { value: 1, label: '未打开' },
+  { value: 2, label: '已打开' },
+  { value: 3, label: '已填写' }
+];
 // 路由实例
 const router = useRouter()
 const route = useRoute()
@@ -89,12 +148,106 @@ const userInfo = ref({})
 // 筛选条件
 const searchParams = ref({
   insure_status: null,
-  date: dayjs().valueOf(),
-  name: ''
+  date: "",
+  name: '',
+  employeeId: id
 })
-
+const handleReset = () => {
+  searchParams.value = {
+    insure_status: null,
+    date: "",
+    name: '',
+    employeeId: id
+  }
+  fetchFarmList()
+}
 // 养殖场列表数据
-const farmList = ref([])
+const farmList = ref([]);
+const showMapDialog = ref(false);
+const handleLocation = () => {
+  showMapDialog.value = true;
+  setTimeout(() => {
+    initMap();
+  }, 300);
+}
+const mapData = ref({
+  latitude: '',
+  longitude: ''
+})
+let markersArray = [];
+let map = null;
+const initMap = () => {
+  if (!window.qq || !window.qq.maps) {
+    ElMessage.error('地图SDK未加载，请检查网络连接');
+    return;
+  }
+
+  const center = new qq.maps.LatLng(
+    mapData.value.latitude || farmForm.value.latitude || 22.3193292,
+    mapData.value.longitude || farmForm.value.longitude || 114.1694229
+  );
+
+  map = new qq.maps.Map(document.getElementById("map"), {
+    center: center,
+    zoom: 16
+  });
+
+  // 如果已有位置，添加标记
+  if (farmForm.value.latitude && farmForm.value.longitude) {
+    const position = new qq.maps.LatLng(farmForm.value.latitude, farmForm.value.longitude);
+    const marker = new qq.maps.Marker({
+      map: map,
+      position: position
+    });
+    markersArray.push(marker);
+  }
+
+  // 添加点击事件
+  qq.maps.event.addListener(map, "click", function (event) {
+    farmForm.value.longitude = event.latLng.getLng(); // 经度
+    farmForm.value.latitude = event.latLng.getLat(); // 纬度
+
+    // 清除之前的标记
+    if (markersArray.length > 0) {
+      for (let i = 0; i < markersArray.length; i++) {
+        markersArray[i].setMap(null);
+      }
+      markersArray = [];
+    }
+
+    // 添加新标记
+    const marker = new qq.maps.Marker({
+      map: map,
+      position: event.latLng
+    });
+    markersArray.push(marker);
+  });
+}
+
+const getLocation = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latitude = position.coords.latitude; // 纬度
+        const longitude = position.coords.longitude; // 经度
+        mapData.value.latitude = latitude;
+        mapData.value.longitude = longitude;
+      },
+      (error) => {
+        console.error('获取位置失败:', error);
+      }
+    );
+  } else {
+    console.log('浏览器不支持 Geolocation API');
+  }
+}
+const confirmLocation = () => {
+  if (!farmForm.value.latitude || !farmForm.value.longitude) {
+    ElMessage.warning('请先在地图上选择位置');
+    return;
+  }
+  showMapDialog.value = false;
+}
 const handleFarmClick = (farm) => {
   console.log('点击养殖场:', farm)
   router.push({
@@ -104,6 +257,7 @@ const handleFarmClick = (farm) => {
     }
   })
 }
+getLocation()
 const handleSearch = () => {
   console.log('搜索条件:', searchParams.value)
   fetchFarmList()
@@ -244,13 +398,6 @@ const handleLogout = () => {
   router.push('/salesman-login')
 }
 
-// 搜索养殖户
-const searchFarms = () => {
-  console.log('搜索养殖户:', searchFarmName.value)
-  console.log('选择的日期时间戳:', dateRange.value)
-  // 可以在这里调用API获取数据
-}
-
 // 生命周期钩子
 onMounted(() => {
   // 可以在这里获取初始数据
@@ -271,9 +418,99 @@ const fetchFarmList = async () => {
     console.error('获取养殖场列表失败:', error)
   }
 }
+
+// 新增养殖户相关
+const addFarmDialogVisible = ref(false)
+const farmFormRef = ref(null)
+const submitting = ref(false)
+const farmForm = ref({
+  name: '',
+  contactPeople: '',
+  phone: '',
+  address: '',
+  scale: '',
+  employeeId: id,
+  status: null,
+  latitude: '',
+  longitude: ''
+})
+const locationText = computed(() => {
+  if (farmForm.value.latitude && farmForm.value.longitude) {
+    return `经度: ${farmForm.value.longitude},\n 纬度: ${farmForm.value.latitude}`;
+  }
+  return '';
+});
+// 表单验证规则
+const formRules = {
+  name: [
+    { required: true, message: '请输入养殖户名称', trigger: 'blur' }
+  ],
+  contactPeople: [
+    { required: true, message: '请输入负责人姓名', trigger: 'blur' }
+  ],
+  phone: [
+    { required: true, message: '请输入联系电话', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
+  ]
+}
+
+// 打开新增养殖户对话框
+const handleAddFarm = () => {
+  addFarmDialogVisible.value = true
+  // 重置表单
+  farmForm.value = {
+    name: '',
+    contactPeople: '',
+    phone: '',
+    address: '',
+    scale: ''
+  }
+}
+// 提交新增养殖户表单
+const submitFarmForm = async () => {
+  if (!farmFormRef.value) return
+
+  try {
+    await farmFormRef.value.validate()
+    submitting.value = true
+
+    // 构建提交的数据
+    const submitData = {
+      ...farmForm.value,
+      employeeId: +id // 使用当前业务员ID
+    }
+
+    // 调用API添加养殖户
+    await postLivestockFarmCreateAPI(submitData)
+
+    ElMessage({
+      message: '添加养殖户成功',
+      type: 'success'
+    })
+
+    // 关闭对话框
+    addFarmDialogVisible.value = false
+
+    // 重新获取列表
+    fetchFarmList()
+  } catch (error) {
+    console.error('表单验证失败或提交出错:', error)
+    if (error.message) {
+      ElMessage({
+        message: error.message || '添加养殖户失败',
+        type: 'error'
+      })
+    }
+  } finally {
+    submitting.value = false
+  }
+}
 </script>
 
 <style scoped>
+:deep(.el-dialog__body) {
+  padding: 0 !important;
+}
 .salesman-main {
   background-color: #f5f7fa;
   min-height: 100vh;
@@ -497,5 +734,20 @@ const fetchFarmList = async () => {
 
 .search-btn:hover {
   background-color: #66b1ff;
+}
+
+/* 添加对话框样式 */
+:deep(.el-dialog__body) {
+  padding: 20px;
+}
+
+:deep(.el-form-item__label) {
+  font-weight: bold;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 }
 </style>
