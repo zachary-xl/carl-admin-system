@@ -26,7 +26,7 @@
                     <el-option label="投保到期" :value="1" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="引种日期" prop="date">
+            <el-form-item label="选择日期" prop="date">
                 <el-date-picker v-model="queryParams.date" type="month" placeholder="选择月份" format="YYYY/MM"
                     value-format="x" clearable />
             </el-form-item>
@@ -52,7 +52,7 @@
             <el-table-column prop="name" label="养殖户名称" align="center" :formatter="normalFormatter" />
             <el-table-column prop="contactPeople" label="负责人" align="center" :formatter="normalFormatter" />
             <el-table-column prop="contactPhone" label="手机号" align="center" :formatter="normalFormatter" />
-            <el-table-column prop="dwellingHouseNum" label="栋舍数" align="center" :formatter="normalFormatter" />
+            <el-table-column prop="dwellingHouseNum" label="栋舍现存栏数" align="center" :formatter="normalFormatter" />
             <el-table-column label="经纬度" align="center">
                 <template #default="{ row }">
                     {{ row.longitude && row.latitude ? `${row.longitude}, ${row.latitude}` : '-' }}

@@ -385,7 +385,7 @@ const fallbackCopyTextToClipboard = (text, callback = null) => {
 const showLinkForManualCopy = (link) => {
   ElMessageBox.alert(link, '请手动复制以下链接', {
     confirmButtonText: '确定',
-    callback: () => {}
+    callback: () => { }
   });
 }
 
@@ -412,7 +412,7 @@ const fetchUserInfo = async () => {
 // 可以添加其他方法，如获取数据的API调用
 const fetchFarmList = async () => {
   try {
-    const response = await getLivestockFarmListAPI({ noPage: true, employeeId: id });
+    const response = await getLivestockFarmListAPI({ noPage: true, employeeId: id, ...searchParams.value });
     farmList.value = response.data.list
   } catch (error) {
     console.error('获取养殖场列表失败:', error)
@@ -511,6 +511,7 @@ const submitFarmForm = async () => {
 :deep(.el-dialog__body) {
   padding: 0 !important;
 }
+
 .salesman-main {
   background-color: #f5f7fa;
   min-height: 100vh;
@@ -520,7 +521,8 @@ const submitFarmForm = async () => {
 .header {
   text-align: center;
   margin-bottom: 20px;
-  position: relative; /* 添加相对定位 */
+  position: relative;
+  /* 添加相对定位 */
 }
 
 .header h2 {
@@ -604,7 +606,7 @@ const submitFarmForm = async () => {
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  position: relative;
 }
 
 .farm-info {
@@ -631,7 +633,6 @@ const submitFarmForm = async () => {
 
 .farm-actions {
   display: flex;
-  flex-direction: column;
   align-items: flex-end;
 }
 
@@ -641,6 +642,9 @@ const submitFarmForm = async () => {
   font-size: 12px;
   margin-bottom: 8px;
   color: #fff;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .status-pending {

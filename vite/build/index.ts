@@ -12,8 +12,8 @@ export default function createViteBuild(): BuildOptions {
     terserOptions: {
       // 传递给 Terser 的选项
       compress: {
-        drop_console: true,
-        drop_debugger: true
+        drop_console: false,
+        drop_debugger: false
       }
     },
     manifest: true, // 生成 manifest.json文件 输入源文件和 hash 后文件的映射

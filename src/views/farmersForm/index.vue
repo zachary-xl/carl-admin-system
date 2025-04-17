@@ -44,13 +44,17 @@
             <span class="text-red-500 mr-1">*</span>
             <span>栋舍信息</span>
           </div>
-          <el-button type="primary" text @click="addHouse" class="text-blue-500">新增</el-button>
+          <el-button type="primary" text @click="addHouse" class="text-blue-500">新增栋舍</el-button>
         </div>
 
         <div v-for="(house, index) in formData.list" :key="index" class="relative border rounded mb-2">
           <div class="mb-3 mt-4">
-            <div class="mb-1">栋舍数量</div>
-            <el-input-number v-model="house.num" :min="1" placeholder="请输入" />
+            <div class="mb-1">栋舍名称</div>
+            <el-input v-model="house.name" placeholder="请输入栋舍名称" />
+          </div>
+          <div class="mb-3 mt-4">
+            <div class="mb-1">栋舍现存栏数</div>
+            <el-input-number v-model="house.num" :min="1" placeholder="请输入栋舍现存栏数" />
           </div>
 
           <div class="mb-2">
@@ -120,7 +124,7 @@ const formData = reactive({
 })
 
 const addHouse = () => {
-  formData.list.push({ num: '', date: '' })
+  formData.list.push({ name: '', num: '', date: '' })
 }
 
 const removeHouse = (index) => {
@@ -157,17 +161,15 @@ const initMap = () => {
     ElMessage.error('地图SDK未加载，请检查网络连接');
     return;
   }
-
+  console.log(mapData.value.latitude, formData.latitude,'---')
   const center = new qq.maps.LatLng(
-    mapData.value.latitude || formData.latitude || 22.3193292,
-    mapData.value.longitude || formData.longitude || 114.1694229
+    mapData.value.latitude || formData.latitude || 29.86032438064803,
+    mapData.value.longitude || formData.longitude || 121.62466049194336
   );
-
   map = new qq.maps.Map(document.getElementById("map"), {
     center: center,
     zoom: 16
   });
-
   // 如果已有位置，添加标记
   if (formData.latitude && formData.longitude) {
     const position = new qq.maps.LatLng(formData.latitude, formData.longitude);
@@ -201,9 +203,11 @@ const initMap = () => {
 }
 
 const getLocation = () => {
+  console.log(navigator.geolocation)
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log(position)
         const latitude = position.coords.latitude; // 纬度
         const longitude = position.coords.longitude; // 经度
         mapData.value.latitude = latitude;
@@ -266,14 +270,8 @@ const submitForm = () => {
 onMounted(async () => {
   loading.value = true
 
-  const { data } = await postFarmersHouseListAPI({ livestockFarmId: id })
-  console.log(data);
-  if (data && data.list.length > 0) {
-    router.push(`/farmers-detail?id=${id}`)
-  } else {
-    // 获取养殖场详情
-    const { data: detailData } = await postFarmersDetailAPI(id)
-    console.log(detailData);
+  const { data: detailData } = await postFarmersDetailAPI(id)
+  if (detailData.status !== 3) {
     if (detailData.status <= 1) {
       postFarmersHouseShareLinkAPI({ id })
     }
@@ -281,12 +279,12 @@ onMounted(async () => {
     formData.id = detailData.id
     formData.contactPeople = detailData.contactPeople
     formData.contactPhone = detailData.contactPhone
-
-    // 如果有经纬度数据，设置到表单
     if (detailData.latitude && detailData.longitude) {
       formData.latitude = detailData.latitude
       formData.longitude = detailData.longitude
     }
+  } else {
+    router.push(`/farmers-detail?id=${id}`)
   }
   loading.value = false
 })

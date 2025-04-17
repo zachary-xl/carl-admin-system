@@ -14,7 +14,7 @@
                 <el-descriptions-item label="养殖户名称">{{ farmerInfo.name }}</el-descriptions-item>
                 <el-descriptions-item label="负责人">{{ farmerInfo.contactPeople }}</el-descriptions-item>
                 <el-descriptions-item label="联系电话">{{ farmerInfo.contactPhone }}</el-descriptions-item>
-                <el-descriptions-item label="栋舍数">{{ farmerInfo.dwellingHouseNum }}</el-descriptions-item>
+                <el-descriptions-item label="栋舍现存栏数">{{ farmerInfo.dwellingHouseNum }}</el-descriptions-item>
                 <el-descriptions-item label="业务员">{{ farmerInfo.employeeName }}</el-descriptions-item>
                 <el-descriptions-item label="区域协赔员">{{ farmerInfo.assistantUserName }}</el-descriptions-item>
                 <el-descriptions-item label="手机号">{{ farmerInfo.assistantUserPhone }}</el-descriptions-item>
@@ -27,7 +27,7 @@
                 <el-divider content-position="left">
                     <span class="section-title">栋舍投保信息</span>
                 </el-divider>
-                <el-button type="primary" class="add-btn" @click="handleAddInsurance">新增</el-button>
+                <el-button type="primary" class="add-btn" @click="handleAddInsurance">新增投保</el-button>
             </div>
 
             <el-table :data="insuranceData" class="w-full">
