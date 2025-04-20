@@ -27,15 +27,15 @@
                 <el-divider content-position="left">
                     <span class="section-title">栋舍投保信息</span>
                 </el-divider>
-                <el-button type="primary" class="add-btn" @click="handleAddInsurance">新增投保</el-button>
+                <el-button type="primary" class="add-btn" @click="handleAddInsurance">新增投保栋舍</el-button>
             </div>
 
             <el-table :data="insuranceData" class="w-full">
                 <el-table-column prop="name" label="名称" align="center" />
                 <el-table-column label="卫星云图" align="center">
                     <template #default="scope">
-                        <el-image @click="handlePreview(scope.row.satelliteMapUrl)"
-                            v-if="scope.row.satelliteMapUrl" :src="scope.row.satelliteMapUrl" class="w-[100px]" />
+                        <el-image @click="handlePreview(scope.row.satelliteMapUrl)" v-if="scope.row.satelliteMapUrl"
+                            :src="scope.row.satelliteMapUrl" class="w-[100px]" />
                     </template>
                 </el-table-column>
                 <el-table-column prop="date" label="今日日龄" align="center">
@@ -76,11 +76,7 @@
         </div>
         <DetailFormComp ref="detailFormRef" :config="detailConfig" v-if="detailFormVisible" :visible="detailFormVisible"
             @submit="handleSubmit" @close="detailFormVisible = false" />
-            <el-image-viewer
-        v-if="showPreview"
-        :url-list="srcList"
-        @close="showPreview = false"
-      />
+        <el-image-viewer v-if="showPreview" :url-list="srcList" @close="showPreview = false" />
     </div>
 </template>
 

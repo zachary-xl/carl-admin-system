@@ -73,7 +73,7 @@
   </div>
 
   <!-- 地图选择对话框 -->
-  <el-dialog title="选择位置" v-model="showMapDialog" width="100vw" height="600px" append-to-body destroy-on-close>
+  <el-dialog title="选择位置" v-model="showMapDialog" width="100vw" height="500px" append-to-body destroy-on-close>
     <div class="map-container">
       <div id="map" style="height: 100%; width: 100%;"></div>
     </div>

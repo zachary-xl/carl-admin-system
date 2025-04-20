@@ -187,11 +187,9 @@ declare global {
 }
 var geocoder: any, markersArray: any[] = [];
 const initMap = () => {
-    console.log(mapData.value, ';--------');
     const qq = (window.qq as any);
-    const latitude = formData.latitude || mapData.value.latitude || 29.86032438064803;
-    const longitude = formData.longitude || mapData.value.longitude || 121.62466049194336;
-    var center = new qq.maps.LatLng(latitude, longitude);
+    var center = new qq.maps.LatLng(mapData.value.latitude || formData.latitude || 29.86032438064803,
+        mapData.value.longitude || formData.longitude || 121.62466049194336);
     var map = new qq.maps.Map(document.getElementById("map"), {
         center: center,
         zoom: 13
